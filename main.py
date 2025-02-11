@@ -41,8 +41,14 @@ def get_SV(alpha):
     return numpy.array(alpha_nonzero), numpy.array(SV), numpy.array(T_nonzero)
 
 
+
 ret = minimize(objective, start, bounds=B, constraints=XC)
 alpha = ret['x']
-alpha_nonzero, SV = get_SV(alpha)
+alpha_nonzero, SV, T_nonzero = get_SV(alpha)
+ 
+def ind(s): # s is the point we want to classify.
+    sum = 0 
+    for i in range(alpha_nonzero.size):
+        sum += alpha_nonzero[i] * T_nonzero[i] * kernel_linear(s, SV[i]) - b
 
 input()
