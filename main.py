@@ -33,7 +33,7 @@ def objective(alpha):
 def zerofun(alpha_vector): 
     sum = 0
     for i in range(len(alpha_vector)):
-        sum += (numpy.dot(alpha_vector[i], T[i]))
+        sum += (alpha_vector[i] * T[i]) # could convert to numpy.dot()
 
     return sum
 
@@ -41,3 +41,11 @@ def zerofun(alpha_vector):
 constraints = {"type": "eq", "fun":zerofun}
 
 input()
+
+# Calculates the b value
+def calc_b(s, datapoints, t_s, alpha_vector):
+    sum = 0
+    for i in range(len(alpha_vector)):
+        sum += (alpha_vector[i]*T[i]*kernel_linear(s, datapoints[i]) - t_s)
+    
+    return sum
