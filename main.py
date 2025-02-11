@@ -62,16 +62,17 @@ def calc_b(s, t_s, alpha_vector):
 ret = minimize(objective, start, bounds=B, constraints=constraints)
 alpha = ret['x']
 alpha_nonzero, SV, T_nonzero = get_SV(alpha)
-b = calc_b(SV[0], T ,alpha) # call with any support vector.
-
+b = calc_b(SV[0], T[0] ,alpha) # call with any support vector.
 
 def ind(s): 
     sum = 0 
     for i in range(alpha_nonzero.size):
+        #print("IND:" + str(alpha_nonzero[i] * T_nonzero[i] * kernel_linear(s, SV[i])))
         sum += alpha_nonzero[i] * T_nonzero[i] * kernel_linear(s, SV[i])
     return sum - b
 
-plot_classes(classA, classB, ind)
 
+
+plot_classes(classA, classB, ind)
 
 input()
