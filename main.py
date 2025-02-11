@@ -1,10 +1,9 @@
 import numpy , random , math
 from scipy.optimize import minimize
-import matplotlib . pyplot as plt
-from datageneration import generate_data
-
+import matplotlib.pyplot as plt
+from data_gen_and_plot import generate_data, plot_classes
 print("Start")
-N, X, T = generate_data()
+N, X, T, classA, classB = generate_data()
 C = 2 # Slack value
 B = [(0, C) for b in range(N)]
 start = numpy.zeros(N)
@@ -53,24 +52,26 @@ def get_SV(alpha):
 
 
 # Calculates the b value
-def calc_b(s, datapoints, t_s, alpha_vector):
+def calc_b(s, t_s, alpha_vector):
     sum = 0
     for i in range(len(alpha_vector)):
-        sum += (alpha_vector[i]*T[i]*kernel_linear(s, datapoints[i]) - t_s)
+        sum += (alpha_vector[i]*T[i]*kernel_linear(s, X[i]))
     
-    return sum
+    return sum - t_s
 
 ret = minimize(objective, start, bounds=B, constraints=constraints)
 alpha = ret['x']
 alpha_nonzero, SV, T_nonzero = get_SV(alpha)
-# CALL calc_b here and save in a global variable b.
+b = calc_b(SV[0], T ,alpha) # call with any support vector.
 
 
-def ind(s): # s is the point we want to classify.
+def ind(s): 
     sum = 0 
     for i in range(alpha_nonzero.size):
-        sum += alpha_nonzero[i] * T_nonzero[i] * kernel_linear(s, SV[i]) - b
+        sum += alpha_nonzero[i] * T_nonzero[i] * kernel_linear(s, SV[i])
+    return sum - b
 
-print(alpha)
-print(alpha_nonzero)
+plot_classes(classA, classB, ind)
+
+
 input()
