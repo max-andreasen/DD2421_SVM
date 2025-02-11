@@ -28,6 +28,17 @@ def objective(alpha):
     sum2 = numpy.sum(alpha)
     return sum1 - sum2
 
+# Check condition for running the SVM, Eq. 10
+def zerofun(alpha_vector): 
+    sum = 0
+    for i in range(len(alpha_vector)):
+        sum += (alpha_vector[i] * T[i]) # could convert to numpy.dot()
+
+    return sum
+
+
+constraints = {"type": "eq", "fun":zerofun}
+
 def get_SV(alpha):
     SV = []
     alpha_nonzero = []
@@ -41,14 +52,24 @@ def get_SV(alpha):
     return numpy.array(alpha_nonzero), numpy.array(SV), numpy.array(T_nonzero)
 
 
+# Calculates the b value
+def calc_b(s, datapoints, t_s, alpha_vector):
+    sum = 0
+    for i in range(len(alpha_vector)):
+        sum += (alpha_vector[i]*T[i]*kernel_linear(s, datapoints[i]) - t_s)
+    
+    return sum
 
 ret = minimize(objective, start, bounds=B, constraints=XC)
 alpha = ret['x']
 alpha_nonzero, SV, T_nonzero = get_SV(alpha)
- 
+# CALL calc_b here and save in a global variable b.
+
+
 def ind(s): # s is the point we want to classify.
     sum = 0 
     for i in range(alpha_nonzero.size):
         sum += alpha_nonzero[i] * T_nonzero[i] * kernel_linear(s, SV[i]) - b
+
 
 input()
