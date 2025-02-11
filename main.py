@@ -31,19 +31,18 @@ def objective(alpha):
 def get_SV(alpha):
     SV = []
     alpha_nonzero = []
+    T_nonzero = []
     for i in range(alpha.size):
-        if alpha[i] != 0:
+        if alpha[i] >= math.pow(10, -5): # threshold since in reality the values in alpha won't be exactly 0, just very small.
             alpha_nonzero.append(alpha[i])
             SV.append(X[i])
+            T_nonzero.append(T[i])
 
-    return numpy.array(alpha_nonzero), numpy.array(SV)
-
-
+    return numpy.array(alpha_nonzero), numpy.array(SV), numpy.array(T_nonzero)
 
 
 ret = minimize(objective, start, bounds=B, constraints=XC)
 alpha = ret['x']
-
 alpha_nonzero, SV = get_SV(alpha)
 
 input()
