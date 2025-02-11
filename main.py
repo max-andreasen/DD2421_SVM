@@ -28,6 +28,22 @@ def objective(alpha):
     sum2 = numpy.sum(alpha)
     return sum1 - sum2
 
+def get_SV(alpha):
+    SV = []
+    alpha_nonzero = []
+    for i in range(alpha.size):
+        if alpha[i] != 0:
+            alpha_nonzero.append(alpha[i])
+            SV.append(X[i])
 
+    return numpy.array(alpha_nonzero), numpy.array(SV)
+
+
+
+
+ret = minimize(objective, start, bounds=B, constraints=XC)
+alpha = ret['x']
+
+alpha_nonzero, SV = get_SV(alpha)
 
 input()
