@@ -29,5 +29,15 @@ def objective(alpha):
     return sum1 - sum2
 
 
+# Check condition for running the SVM, Eq. 10
+def zerofun(alpha_vector): 
+    sum = 0
+    for i in range(len(alpha_vector)):
+        sum += (numpy.dot(alpha_vector[i], T[i]))
+
+    return sum
+
+
+constraints = {"type": "eq", "fun":zerofun}
 
 input()
