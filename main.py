@@ -12,6 +12,9 @@ start = numpy.zeros(N)
 def kernel_linear(x_i, x_j): 
     return numpy.dot(x_i.T, x_j)
 
+def kernel_polynomial(x_i, x_j, p):
+    return math.pow( numpy.dot(x_i.T, x_j) +1, p )
+
 def kernel_RBF(x_i, x_j, sigma):
     return math.pow(math.e, -(numpy.linalg.norm(x_i - x_j)**2)/(2*sigma**2))
 
@@ -70,7 +73,8 @@ def ind(s):
     sum = 0 
     for i in range(alpha_nonzero.size):
         #sum += alpha_nonzero[i] * T_nonzero[i] * kernel_linear(s, SV[i])
-        sum += alpha_nonzero[i] * T_nonzero[i] * kernel_RBF(s, SV[i], 0.75) # sigma determines smoothness of the boundary.
+        sum += alpha_nonzero[i] * T_nonzero[i] * kernel_polynomial(s, SV[i], 2)
+        #sum += alpha_nonzero[i] * T_nonzero[i] * kernel_RBF(s, SV[i], 0.75) # sigma determines smoothness of the boundary
     return sum - b
 
 
