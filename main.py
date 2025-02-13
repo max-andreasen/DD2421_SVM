@@ -3,14 +3,13 @@ from scipy.optimize import minimize
 import matplotlib.pyplot as plt
 from data_gen_and_plot import generate_data, plot_classes
 
-numpy.random.seed(100)
 N, X, T, classA, classB = generate_data()
 C = 2 # Slack value
 B = [(0, C) for b in range(N)]
 start = numpy.zeros(N)
 
 # change the string below:
-kernel_type = "RBF"
+kernel_type = "linear"
 
 def kernel(x_i, x_j):
     match kernel_type:
