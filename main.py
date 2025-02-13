@@ -12,6 +12,8 @@ start = numpy.zeros(N)
 def kernel_linear(x_i, x_j): 
     return numpy.dot(x_i.T, x_j)
 
+def kernel_RBF(x_i, x_j, sigma):
+    return math.pow(math.e, -(numpy.linalg.norm(x_i - x_j)**2)/(2*sigma**2))
 
 def compute_P():
     P = numpy.zeros((N, N))
@@ -67,12 +69,10 @@ b = calc_b(SV[0], T[0] ,alpha) # call with any support vector.
 def ind(s): 
     sum = 0 
     for i in range(alpha_nonzero.size):
-        #print("IND:" + str(alpha_nonzero[i] * T_nonzero[i] * kernel_linear(s, SV[i])))
-        sum += alpha_nonzero[i] * T_nonzero[i] * kernel_linear(s, SV[i])
+        #sum += alpha_nonzero[i] * T_nonzero[i] * kernel_linear(s, SV[i])
+        sum += alpha_nonzero[i] * T_nonzero[i] * kernel_RBF(s, SV[i], 0.75) # sigma determines smoothness of the boundary.
     return sum - b
 
 
 
 plot_classes(classA, classB, ind)
-
-input()
