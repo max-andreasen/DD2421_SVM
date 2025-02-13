@@ -2,12 +2,26 @@ import numpy , random , math
 from scipy.optimize import minimize
 import matplotlib.pyplot as plt
 from data_gen_and_plot import generate_data, plot_classes
-print("Start")
+
+numpy.random.seed(100)
 N, X, T, classA, classB = generate_data()
 C = 2 # Slack value
 B = [(0, C) for b in range(N)]
 start = numpy.zeros(N)
 
+# change the string below:
+kernel_type = "RBF"
+
+def kernel(x_i, x_j):
+    match kernel_type:
+        case "linear":
+            return kernel_linear(x_i, x_j)
+        case "polynomial":
+            return kernel_polynomial(x_i, x_j, 2)
+        case "RBF":
+            return kernel_RBF(x_i, x_j, 0.75)
+        case _:
+            print("Incorrect kernel type!")
 
 def kernel_linear(x_i, x_j): 
     return numpy.dot(x_i.T, x_j)
@@ -22,10 +36,10 @@ def compute_P():
     P = numpy.zeros((N, N))
     for i in range(X.shape[0]):
         for j in range(X.shape[0]):
-            P[i,j] = T[i] * T[j] * kernel_linear(X[i], X[j])
+            P[i,j] = T[i] * T[j] * kernel(X[i], X[j])
     return P
 
-P = compute_P() # Precomputed t[i]*t[j] * kernel_linear(X[i], X[j] for efficiency.
+P = compute_P() # Precomputed t[i]*t[j] * kernel(X[i], X[j] for efficiency.
 
 def objective(alpha):
     sum1 = sum1 = 1/2 * numpy.dot(alpha.T, numpy.dot(P, alpha))
@@ -60,7 +74,7 @@ def get_SV(alpha):
 def calc_b(s, t_s, alpha_vector):
     sum = 0
     for i in range(len(alpha_vector)):
-        sum += (alpha_vector[i]*T[i]*kernel_linear(s, X[i]))
+        sum += (alpha_vector[i]*T[i]*kernel(s, X[i]))
     
     return sum - t_s
 
@@ -72,9 +86,7 @@ b = calc_b(SV[0], T[0] ,alpha) # call with any support vector.
 def ind(s): 
     sum = 0 
     for i in range(alpha_nonzero.size):
-        #sum += alpha_nonzero[i] * T_nonzero[i] * kernel_linear(s, SV[i])
-        sum += alpha_nonzero[i] * T_nonzero[i] * kernel_polynomial(s, SV[i], 2)
-        #sum += alpha_nonzero[i] * T_nonzero[i] * kernel_RBF(s, SV[i], 0.75) # sigma determines smoothness of the boundary
+        sum += alpha_nonzero[i] * T_nonzero[i] * kernel(s, SV[i])
     return sum - b
 
 
